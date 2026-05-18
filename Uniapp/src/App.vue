@@ -1,20 +1,20 @@
-<script>
+<script setup>
 import { onLaunch, onShow, onHide } from '@dcloudio/uni-app'
+import { useUserStore } from '@/stores/user'
 
-export default {
-  onLaunch() {
-    console.log('App Launch - 峨眉山旅游系统启动')
-    const { useUserStore } = require('@/stores/user')
-    const userStore = useUserStore()
-    userStore.initUserInfo()
-  },
-  onShow() {
-    console.log('App Show')
-  },
-  onHide() {
-    console.log('App Hide')
-  }
-}
+onLaunch(() => {
+  console.log('App Launch - 峨眉山旅游系统启动')
+  const userStore = useUserStore()
+  userStore.initUserInfo()
+})
+
+onShow(() => {
+  console.log('App Show')
+})
+
+onHide(() => {
+  console.log('App Hide')
+})
 </script>
 
 <style lang="scss">
