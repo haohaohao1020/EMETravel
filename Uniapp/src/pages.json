@@ -1,6 +1,14 @@
 {
   "pages": [
     {
+      "path": "pages/login/login",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "登录",
+        "backgroundColor": "#F5F5F0"
+      }
+    },
+    {
       "path": "pages/index/index",
       "style": {
         "navigationBarTitleText": "峨眉山旅游",
@@ -108,6 +116,7 @@
     "navigationStyle": "default"
   },
   "tabBar": {
+    "custom": true,
     "color": "#999999",
     "selectedColor": "#2D5A4B",
     "borderStyle": "black",
@@ -115,27 +124,19 @@
     "list": [
       {
         "pagePath": "pages/index/index",
-        "text": "首页",
-        "iconPath": "static/tabbar/home.png",
-        "selectedIconPath": "static/tabbar/home-active.png"
+        "text": "首页"
       },
       {
         "pagePath": "pages/ticket/ticket",
-        "text": "票务",
-        "iconPath": "static/tabbar/ticket.png",
-        "selectedIconPath": "static/tabbar/ticket-active.png"
+        "text": "票务"
       },
       {
         "pagePath": "pages/scenic/scenic",
-        "text": "景点",
-        "iconPath": "static/tabbar/scenic.png",
-        "selectedIconPath": "static/tabbar/scenic-active.png"
+        "text": "景点"
       },
       {
         "pagePath": "pages/user/user",
-        "text": "我的",
-        "iconPath": "static/tabbar/user.png",
-        "selectedIconPath": "static/tabbar/user-active.png"
+        "text": "我的"
       }
     ]
   },

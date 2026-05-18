@@ -141,7 +141,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useScenicStore } from '@/stores/scenic'
 
 const scenicStore = useScenicStore()
@@ -191,6 +191,10 @@ const doSearch = () => {
 const goToDetail = (id) => {
   uni.navigateTo({ url: `/pages/scenic/detail?id=${id}` })
 }
+
+onMounted(async () => {
+  await scenicStore.loadSpots()
+})
 </script>
 
 <style lang="scss" scoped>

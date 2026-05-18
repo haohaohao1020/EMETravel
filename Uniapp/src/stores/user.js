@@ -12,11 +12,25 @@ export const useUserStore = defineStore('user', () => {
     const savedToken = uni.getStorageSync('token')
     
     if (savedUserInfo) {
-      userInfo.value = JSON.parse(savedUserInfo)
+      try {
+        userInfo.value = JSON.parse(savedUserInfo)
+      } catch (e) {
+        console.error('解析用户信息失败', e)
+      }
     }
     if (savedToken) {
       token.value = savedToken
     }
+  }
+
+  const setToken = (newToken) => {
+    token.value = newToken
+    uni.setStorageSync('token', newToken)
+  }
+
+  const setUserInfo = (info) => {
+    userInfo.value = info
+    uni.setStorageSync('userInfo', JSON.stringify(info))
   }
 
   const login = async (loginData) => {
@@ -24,9 +38,9 @@ export const useUserStore = defineStore('user', () => {
       setTimeout(() => {
         const mockUser = {
           id: 1,
-          username: loginData.username || '游客',
+          username: loginData.phone || '游客',
           avatar: 'https://picsum.photos/200/200?random=user',
-          phone: '138****8888',
+          phone: loginData.phone || '138****8888',
           level: '普通会员',
           points: 1000
         }
@@ -52,6 +66,11 @@ export const useUserStore = defineStore('user', () => {
       title: '已退出登录',
       icon: 'success'
     })
+    setTimeout(() => {
+      uni.reLaunch({
+        url: '/pages/login/login'
+      })
+    }, 1000)
   }
 
   const updateUserInfo = (newInfo) => {
@@ -64,6 +83,8 @@ export const useUserStore = defineStore('user', () => {
     token,
     isLoggedIn,
     initUserInfo,
+    setToken,
+    setUserInfo,
     login,
     logout,
     updateUserInfo

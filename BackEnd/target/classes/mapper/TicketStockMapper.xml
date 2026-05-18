@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.emei.tourism.mapper.TicketStockMapper">
+
+    <update id="decreaseStock">
+        UPDATE t_ticket_stock
+        SET used_stock = used_stock + #{quantity}
+        WHERE id = #{id} AND total_stock - used_stock - locked_stock >= #{quantity}
+    </update>
+
+</mapper>

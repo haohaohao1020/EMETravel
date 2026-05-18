@@ -1,6 +1,6 @@
 
 const BASE_URL = process.env.NODE_ENV === 'development' 
-  ? '/api' 
+  ? '' 
   : 'https://api.emei-tour.com'
 
 class Request {

@@ -42,8 +42,8 @@
         <image :src="item.image" mode="aspectFill" class="news-image" />
         <view class="news-content">
           <view class="news-header">
-            <text class="news-type" v-if="item.type">{{ item.type }}</text>
-            <text class="news-top" v-if="item.isTop">置顶</text>
+            <text class="news-type" v-if="item.type">{{ typeMap[item.type] || '资讯' }}</text>
+            <text class="news-top" v-if="item.isTop === 1">置顶</text>
           </view>
           <text class="news-title">{{ item.title }}</text>
           <text class="news-summary">{{ item.summary }}</text>
@@ -60,23 +60,29 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useScenicStore } from '@/stores/scenic'
 
 const scenicStore = useScenicStore()
 const currentTab = ref('all')
 
+const typeMap = {
+  1: '公告',
+  2: '资讯',
+  3: '攻略'
+}
+
 const topNewsList = computed(() => {
-  return scenicStore.news.filter(n => n.isTop).slice(0, 1)
+  return scenicStore.news.filter(n => n.isTop === 1).slice(0, 1)
 })
 
 const filteredNews = computed(() => {
-  let news = scenicStore.news.filter(n => !n.isTop)
+  let news = scenicStore.news.filter(n => n.isTop !== 1)
   
   if (currentTab.value === 'notice') {
-    news = news.filter(n => n.type === '公告' || n.type === '运营公告' || n.type === '重要通知')
+    news = news.filter(n => n.type === 1)
   } else if (currentTab.value === 'info') {
-    news = news.filter(n => n.type === '旅游资讯' || n.type === '景区动态')
+    news = news.filter(n => n.type === 2 || n.type === 3)
   }
   
   return news
@@ -89,6 +95,10 @@ const switchTab = (tab) => {
 const goToDetail = (id) => {
   uni.navigateTo({ url: `/pages/news/detail?id=${id}` })
 }
+
+onMounted(async () => {
+  await scenicStore.loadNews()
+})
 </script>
 
 <style lang="scss" scoped>

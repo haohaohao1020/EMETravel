@@ -249,8 +249,13 @@ const goToNewsDetail = (id) => {
   uni.navigateTo({ url: `/pages/news/detail?id=${id}` })
 }
 
-onMounted(() => {
+onMounted(async () => {
   console.log('首页加载完成')
+  await Promise.all([
+    scenicStore.loadSpots(),
+    scenicStore.loadNews(),
+    ticketStore.loadTickets()
+  ])
 })
 </script>
 

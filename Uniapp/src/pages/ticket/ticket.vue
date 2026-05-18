@@ -37,7 +37,7 @@
       <view class="ticket-card" v-for="ticket in filteredTickets" :key="ticket.id" @tap="goToDetail(ticket)">
         <view class="ticket-image-wrapper">
           <image :src="ticket.image" mode="aspectFill" class="ticket-image" />
-          <view class="ticket-type-tag" v-if="ticket.type === 'cable' && ticket.isLimited">
+          <view class="ticket-type-tag" v-if="ticket.type === 2 && ticket.stock !== -1">
             <text class="type-tag-text">限量</text>
           </view>
         </view>
@@ -52,13 +52,13 @@
           </view>
           <text class="ticket-subtitle">{{ ticket.subtitle }}</text>
           
-          <view class="ticket-info-row" v-if="ticket.type === 'cable'">
+          <view class="ticket-info-row" v-if="ticket.type === 2 && ticket.stock !== -1">
             <view class="stock-info" :class="{ low: ticket.stock < 200 }">
               <text class="stock-icon">⚠️</text>
               <text class="stock-text">剩余 {{ ticket.stock }} 张</text>
             </view>
             <view class="time-slots" v-if="ticket.timeSlots">
-              <text class="slots-text">可预约 {{ ticket.timeSlots.length }} 个时段</text>
+              <text class="slots-text">可预约 {{ ticket.timeSlots.split(',').length }} 个时段</text>
             </view>
           </view>
 
@@ -120,7 +120,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useTicketStore } from '@/stores/ticket'
 
 const ticketStore = useTicketStore()
@@ -128,14 +128,21 @@ const ticketStore = useTicketStore()
 const currentTab = ref('all')
 
 const filteredTickets = computed(() => {
-  if (currentTab.value === 'all') {
-    return ticketStore.tickets.filter(t => t.type !== 'package')
+  const typeMap = {
+    'all': null,
+    'gate': 1,
+    'cable': 2,
+    'bus': 3
   }
-  return ticketStore.tickets.filter(t => t.type === currentTab.value)
+  
+  if (currentTab.value === 'all') {
+    return ticketStore.tickets.filter(t => t.type !== 4)
+  }
+  return ticketStore.tickets.filter(t => t.type === typeMap[currentTab.value])
 })
 
 const packageTickets = computed(() => {
-  return ticketStore.tickets.filter(t => t.type === 'package')
+  return ticketStore.tickets.filter(t => t.type === 4)
 })
 
 const switchTab = (tab) => {
@@ -151,6 +158,10 @@ const goToConfirm = (ticket) => {
   ticketStore.selectTicket(ticket)
   uni.navigateTo({ url: `/pages/ticket/confirm?id=${ticket.id}` })
 }
+
+onMounted(async () => {
+  await ticketStore.loadTickets()
+})
 </script>
 
 <style lang="scss" scoped>

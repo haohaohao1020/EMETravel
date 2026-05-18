@@ -1,0 +1,14 @@
+{
+  "name": "emei-tourism",
+  "version": "1.0.0",
+  "description": "峨眉山旅游系统",
+  "scripts": {
+    "mock": "node mock-server.js",
+    "dev:h5": "cd Uniapp && npm run dev:h5"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2"
+  }
+}
