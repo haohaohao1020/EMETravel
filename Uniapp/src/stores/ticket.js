@@ -14,8 +14,9 @@ export const useTicketStore = defineStore('ticket', () => {
     if (tickets.value.length > 0) return
     loading.value = true
     try {
-      const data = await getTicketList()
-      tickets.value = data || []
+      const res = await getTicketList()
+      console.log('票务列表响应:', res)
+      tickets.value = res?.data || []
     } catch (error) {
       console.error('加载票务失败:', error)
     } finally {

@@ -12,8 +12,9 @@ export const useScenicStore = defineStore('scenic', () => {
     if (spots.value.length > 0) return
     loading.value = true
     try {
-      const data = await getScenicList()
-      spots.value = data || []
+      const res = await getScenicList()
+      console.log('景点列表响应:', res)
+      spots.value = res?.data || []
     } catch (error) {
       console.error('加载景点失败:', error)
     } finally {
@@ -25,8 +26,9 @@ export const useScenicStore = defineStore('scenic', () => {
     if (news.value.length > 0) return
     loading.value = true
     try {
-      const data = await getNewsList()
-      news.value = data?.records || []
+      const res = await getNewsList()
+      console.log('资讯列表响应:', res)
+      news.value = res?.data?.records || []
     } catch (error) {
       console.error('加载资讯失败:', error)
     } finally {

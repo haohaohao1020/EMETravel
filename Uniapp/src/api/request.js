@@ -1,6 +1,6 @@
 import { useUserStore } from '@/stores/user'
 
-const BASE_URL = 'http://localhost:8081'
+const BASE_URL = '/api'
 
 const request = (options) => {
   return new Promise((resolve, reject) => {
