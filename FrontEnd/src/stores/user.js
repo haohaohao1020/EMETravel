@@ -1,69 +1,46 @@
 import { defineStore } from 'pinia'
-import { login, logout, getUserInfo } from '@/api/user'
-import { setToken, removeToken } from '@/utils/auth'
 
 export const useUserStore = defineStore('user', {
   state: () => ({
-    token: '',
-    userInfo: {},
-    roles: [],
-    permissions: []
+    token: 'mock-token',
+    userInfo: {
+      id: 1,
+      username: 'admin',
+      nickname: '超级管理员',
+      avatar: ''
+    },
+    roles: ['admin'],
+    permissions: ['*']
   }),
 
   actions: {
     login(userInfo) {
-      const { username, password } = userInfo
-      return new Promise((resolve, reject) => {
-        login({ username: username.trim(), password: password }).then(response => {
-          const { data } = response
-          this.token = data.token
-          setToken(data.token)
-          resolve()
-        }).catch(error => {
-          reject(error)
-        })
+      return new Promise((resolve) => {
+        this.token = 'mock-token'
+        resolve()
       })
     },
 
     getUserInfo() {
-      return new Promise((resolve, reject) => {
-        getUserInfo().then(response => {
-          const { data } = response
-          this.userInfo = data.user
-          this.roles = data.roles
-          this.permissions = data.permissions
-          localStorage.setItem('roles', JSON.stringify(data.roles))
-          localStorage.setItem('permissions', JSON.stringify(data.permissions))
-          resolve(data)
-        }).catch(error => {
-          reject(error)
+      return new Promise((resolve) => {
+        resolve({
+          user: this.userInfo,
+          roles: this.roles,
+          permissions: this.permissions
         })
       })
     },
 
     logout() {
-      return new Promise((resolve, reject) => {
-        logout().then(() => {
-          this.token = ''
-          this.userInfo = {}
-          this.roles = []
-          this.permissions = []
-          removeToken()
-          localStorage.removeItem('roles')
-          localStorage.removeItem('permissions')
-          resolve()
-        }).catch(error => {
-          reject(error)
-        })
+      return new Promise((resolve) => {
+        this.token = ''
+        resolve()
       })
     },
 
     resetToken() {
       return new Promise(resolve => {
         this.token = ''
-        this.roles = []
-        this.permissions = []
-        removeToken()
         resolve()
       })
     }

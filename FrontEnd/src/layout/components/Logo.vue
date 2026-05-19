@@ -2,10 +2,14 @@
   <div class="sidebar-logo-container" @click="toggleClick">
     <transition name="sidebarLogoFade">
       <router-link key="logo" v-if="collapse" class="sidebar-logo-link" to="/">
-        <img src="@/assets/logo.png" class="sidebar-logo">
+        <div class="sidebar-logo-icon">
+          <el-icon :size="28" color="#409EFF"><Mountain /></el-icon>
+        </div>
       </router-link>
       <router-link key="title" v-else class="sidebar-logo-link" to="/">
-        <img src="@/assets/logo.png" class="sidebar-logo">
+        <div class="sidebar-logo-icon">
+          <el-icon :size="28" color="#409EFF"><Mountain /></el-icon>
+        </div>
         <h1 class="sidebar-title">峨眉山景区</h1>
       </router-link>
     </transition>
@@ -38,10 +42,12 @@ const toggleClick = () => {
     height: 100%;
     width: 100%;
 
-    & .sidebar-logo {
+    & .sidebar-logo-icon {
+      display: inline-block;
       width: 32px;
       height: 32px;
       vertical-align: middle;
+      line-height: 32px;
     }
 
     & .sidebar-title {
