@@ -1,5 +1,5 @@
 <template>
-  <div :class="{'has-logo':showLogo}" class="sidebar">
+  <div :class="{'has-logo':showLogo, 'hideSidebar':isCollapse}" class="sidebar">
     <logo v-if="showLogo" />
     <el-scrollbar wrap-class="scrollbar-wrapper">
       <el-menu
@@ -122,7 +122,7 @@ const routes = computed(() => [
 <style lang="scss" scoped>
 .sidebar {
   transition: width 0.28s;
-  width: 210px !important;
+  width: 210px;
   background-color: #304156;
   height: 100%;
 
@@ -131,7 +131,7 @@ const routes = computed(() => [
   }
 
   &.hideSidebar {
-    width: 54px !important;
+    width: 64px !important;
   }
 
   .is-horizontal {

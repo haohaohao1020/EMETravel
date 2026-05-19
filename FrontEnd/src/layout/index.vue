@@ -1,6 +1,6 @@
 <template>
-  <div class="app-container">
-    <sidebar class="sidebar-container" />
+  <div :class="{'hideSidebar':!appStore.sidebar.opened}" class="app-container">
+    <sidebar :class="{'hideSidebar':!appStore.sidebar.opened}" class="sidebar-container" />
     <div class="main-container">
       <navbar />
       <tags-view />
@@ -28,7 +28,7 @@ const appStore = useAppStore()
 
 .sidebar-container {
   transition: width 0.28s;
-  width: 210px !important;
+  width: 210px;
   height: 100%;
   position: fixed;
   font-size: 0px;
@@ -39,7 +39,7 @@ const appStore = useAppStore()
   overflow: hidden;
 
   &.hideSidebar {
-    width: 54px !important;
+    width: 64px;
   }
 }
 
@@ -48,7 +48,7 @@ const appStore = useAppStore()
   transition: margin-left 0.28s;
 }
 
-.hideSidebar .main-container {
-  margin-left: 54px;
+.app-container.hideSidebar .main-container {
+  margin-left: 64px;
 }
 </style>

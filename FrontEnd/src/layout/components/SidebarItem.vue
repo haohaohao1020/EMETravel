@@ -76,6 +76,9 @@ function resolvePath(routePath) {
   if (isExternal(props.basePath)) {
     return props.basePath
   }
+  if (routePath.startsWith('/')) {
+    return routePath
+  }
   const path = props.basePath + '/' + routePath
   return path.replace(/\/+/g, '/')
 }
