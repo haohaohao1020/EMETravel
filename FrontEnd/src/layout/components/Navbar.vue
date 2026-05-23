@@ -7,7 +7,7 @@
           <el-icon class="user-icon">
             <User />
           </el-icon>
-          <span class="name">{{ userStore.userInfo.username || '管理员' }}</span>
+          <span class="name">{{ userStore.userInfo?.username || userStore.userInfo?.nickname || '管理员' }}</span>
           <el-icon class="el-icon--right">
             <ArrowDown />
           </el-icon>

@@ -2,9 +2,6 @@ import axios from 'axios'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useUserStore } from '@/stores/user'
 import router from '@/router'
-import { mockRequest } from '@/mock'
-
-const useMock = import.meta.env.VITE_USE_MOCK === 'true'
 
 const service = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
@@ -74,43 +71,4 @@ service.interceptors.response.use(
   }
 )
 
-const mockService = {
-  get: (url, params) => {
-    console.log(`[Mock] GET ${url}`, params)
-    return new Promise(resolve => {
-      setTimeout(() => {
-        const result = mockRequest(url, 'get', params)
-        resolve(result)
-      }, 300)
-    })
-  },
-  post: (url, data) => {
-    console.log(`[Mock] POST ${url}`, data)
-    return new Promise(resolve => {
-      setTimeout(() => {
-        const result = mockRequest(url, 'post', data)
-        resolve(result)
-      }, 300)
-    })
-  },
-  put: (url, data) => {
-    console.log(`[Mock] PUT ${url}`, data)
-    return new Promise(resolve => {
-      setTimeout(() => {
-        const result = mockRequest(url, 'put', data)
-        resolve(result)
-      }, 300)
-    })
-  },
-  delete: (url, params) => {
-    console.log(`[Mock] DELETE ${url}`, params)
-    return new Promise(resolve => {
-      setTimeout(() => {
-        const result = mockRequest(url, 'delete', params)
-        resolve(result)
-      }, 300)
-    })
-  }
-}
-
-export default useMock ? mockService : service
+export default service

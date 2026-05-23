@@ -1,6 +1,7 @@
 package com.emei.tourism.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.emei.tourism.entity.ScenicSpot;
 import com.emei.tourism.mapper.ScenicSpotMapper;
@@ -36,5 +37,43 @@ public class ScenicSpotServiceImpl extends ServiceImpl<ScenicSpotMapper, ScenicS
                .orderByAsc(ScenicSpot::getSort)
                .last("LIMIT 6");
         return list(wrapper);
+    }
+
+    @Override
+    public Page<ScenicSpot> getAdminSpotList(String name, Integer status, Integer page, Integer size) {
+        Page<ScenicSpot> pageParam = new Page<>(page, size);
+        LambdaQueryWrapper<ScenicSpot> wrapper = new LambdaQueryWrapper<>();
+        if (name != null && !name.isEmpty()) {
+            wrapper.like(ScenicSpot::getName, name);
+        }
+        if (status != null) {
+            wrapper.eq(ScenicSpot::getStatus, status);
+        }
+        wrapper.orderByAsc(ScenicSpot::getSort).orderByDesc(ScenicSpot::getCreateTime);
+        return page(pageParam, wrapper);
+    }
+
+    @Override
+    public boolean createSpot(ScenicSpot spot) {
+        spot.setStatus(1);
+        return save(spot);
+    }
+
+    @Override
+    public boolean updateSpot(ScenicSpot spot) {
+        return updateById(spot);
+    }
+
+    @Override
+    public boolean deleteSpot(Long id) {
+        return removeById(id);
+    }
+
+    @Override
+    public boolean toggleSpotStatus(Long id, Integer status) {
+        ScenicSpot spot = new ScenicSpot();
+        spot.setId(id);
+        spot.setStatus(status);
+        return updateById(spot);
     }
 }

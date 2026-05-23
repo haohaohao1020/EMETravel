@@ -13,4 +13,14 @@ public interface NoticeService extends IService<Notice> {
     Notice getNoticeDetail(Long id);
     
     List<Notice> getTopNotices();
+    
+    Page<Notice> getAdminNoticeList(String title, Integer type, Integer status, Integer page, Integer size);
+    
+    boolean createNotice(Notice notice);
+    
+    boolean updateNotice(Notice notice);
+    
+    boolean deleteNotice(Long id);
+    
+    boolean toggleNoticeStatus(Long id, Integer status);
 }

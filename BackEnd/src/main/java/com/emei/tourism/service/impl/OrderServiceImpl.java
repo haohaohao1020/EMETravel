@@ -7,6 +7,7 @@ import com.emei.tourism.entity.Order;
 import com.emei.tourism.entity.OrderItem;
 import com.emei.tourism.entity.Ticket;
 import com.emei.tourism.entity.TicketStock;
+import com.emei.tourism.entity.VerifyRecord;
 import com.emei.tourism.mapper.OrderItemMapper;
 import com.emei.tourism.mapper.OrderMapper;
 import com.emei.tourism.service.OrderService;
@@ -18,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -180,6 +180,104 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         LambdaQueryWrapper<OrderItem> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(OrderItem::getOrderId, orderId);
         return orderItemMapper.selectList(wrapper);
+    }
+
+    @Override
+    public Page<Order> getAdminOrderList(String orderNo, Integer status, String visitorName, LocalDateTime startTime, LocalDateTime endTime, Integer page, Integer size) {
+        Page<Order> pageParam = new Page<>(page, size);
+        LambdaQueryWrapper<Order> wrapper = new LambdaQueryWrapper<>();
+        if (orderNo != null && !orderNo.isEmpty()) {
+            wrapper.like(Order::getOrderNo, orderNo);
+        }
+        if (status != null) {
+            wrapper.eq(Order::getStatus, status);
+        }
+        if (visitorName != null && !visitorName.isEmpty()) {
+            wrapper.like(Order::getVisitorName, visitorName);
+        }
+        if (startTime != null) {
+            wrapper.ge(Order::getCreateTime, startTime);
+        }
+        if (endTime != null) {
+            wrapper.le(Order::getCreateTime, endTime);
+        }
+        wrapper.orderByDesc(Order::getCreateTime);
+        return page(pageParam, wrapper);
+    }
+
+    @Override
+    public Map<String, Object> getAdminOrderDetail(Long id) {
+        Order order = getById(id);
+        if (order == null) {
+            return null;
+        }
+        List<OrderItem> items = getOrderItems(id);
+        Map<String, Object> result = new HashMap<>();
+        result.put("order", order);
+        result.put("items", items);
+        return result;
+    }
+
+    @Override
+    public Page<Order> getRefundList(String orderNo, Integer status, Integer page, Integer size) {
+        Page<Order> pageParam = new Page<>(page, size);
+        LambdaQueryWrapper<Order> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Order::getStatus, 4);
+        if (orderNo != null && !orderNo.isEmpty()) {
+            wrapper.like(Order::getOrderNo, orderNo);
+        }
+        wrapper.orderByDesc(Order::getCreateTime);
+        return page(pageParam, wrapper);
+    }
+
+    @Override
+    @Transactional
+    public boolean approveRefund(Long id, String remark, Long operatorId) {
+        Order order = getById(id);
+        if (order == null || order.getStatus() != 4) {
+            return false;
+        }
+        order.setRefundTime(LocalDateTime.now());
+        return updateById(order);
+    }
+
+    @Override
+    @Transactional
+    public boolean rejectRefund(Long id, String remark, Long operatorId) {
+        Order order = getById(id);
+        if (order == null || order.getStatus() != 4) {
+            return false;
+        }
+        order.setStatus(2);
+        order.setRefundReason(remark);
+        return updateById(order);
+    }
+
+    @Override
+    public List<Order> getOrderListForExport(String orderNo, Integer status, String visitorName, LocalDateTime startTime, LocalDateTime endTime) {
+        LambdaQueryWrapper<Order> wrapper = new LambdaQueryWrapper<>();
+        if (orderNo != null && !orderNo.isEmpty()) {
+            wrapper.like(Order::getOrderNo, orderNo);
+        }
+        if (status != null) {
+            wrapper.eq(Order::getStatus, status);
+        }
+        if (visitorName != null && !visitorName.isEmpty()) {
+            wrapper.like(Order::getVisitorName, visitorName);
+        }
+        if (startTime != null) {
+            wrapper.ge(Order::getCreateTime, startTime);
+        }
+        if (endTime != null) {
+            wrapper.le(Order::getCreateTime, endTime);
+        }
+        wrapper.orderByDesc(Order::getCreateTime);
+        return list(wrapper);
+    }
+
+    @Override
+    public Page<VerifyRecord> getVerifyRecordList(String verifyCode, Long ticketId, LocalDateTime startTime, LocalDateTime endTime, Integer page, Integer size) {
+        return new Page<>();
     }
 
     private String generateVerifyCode() {

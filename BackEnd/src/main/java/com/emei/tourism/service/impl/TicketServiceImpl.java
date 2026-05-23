@@ -1,6 +1,7 @@
 package com.emei.tourism.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.emei.tourism.entity.Ticket;
 import com.emei.tourism.entity.TicketStock;
@@ -117,5 +118,78 @@ public class TicketServiceImpl extends ServiceImpl<TicketMapper, Ticket> impleme
             ticketStockMapper.insert(stock);
         }
         return stock;
+    }
+
+    @Override
+    public Page<Ticket> getAdminTicketList(String name, Integer type, Integer status, Integer page, Integer size) {
+        Page<Ticket> pageParam = new Page<>(page, size);
+        LambdaQueryWrapper<Ticket> wrapper = new LambdaQueryWrapper<>();
+        if (name != null && !name.isEmpty()) {
+            wrapper.like(Ticket::getName, name);
+        }
+        if (type != null) {
+            wrapper.eq(Ticket::getType, type);
+        }
+        if (status != null) {
+            wrapper.eq(Ticket::getStatus, status);
+        }
+        wrapper.orderByAsc(Ticket::getType).orderByDesc(Ticket::getCreateTime);
+        return page(pageParam, wrapper);
+    }
+
+    @Override
+    public boolean createTicket(Ticket ticket) {
+        ticket.setStatus(1);
+        return save(ticket);
+    }
+
+    @Override
+    public boolean updateTicket(Ticket ticket) {
+        return updateById(ticket);
+    }
+
+    @Override
+    public boolean deleteTicket(Long id) {
+        return removeById(id);
+    }
+
+    @Override
+    public boolean toggleTicketStatus(Long id, Integer status) {
+        Ticket ticket = new Ticket();
+        ticket.setId(id);
+        ticket.setStatus(status);
+        return updateById(ticket);
+    }
+
+    @Override
+    public Page<TicketStock> getTicketStockList(Long ticketId, LocalDate startDate, LocalDate endDate, Integer page, Integer size) {
+        Page<TicketStock> pageParam = new Page<>(page, size);
+        LambdaQueryWrapper<TicketStock> wrapper = new LambdaQueryWrapper<>();
+        if (ticketId != null) {
+            wrapper.eq(TicketStock::getTicketId, ticketId);
+        }
+        if (startDate != null) {
+            wrapper.ge(TicketStock::getUseDate, startDate);
+        }
+        if (endDate != null) {
+            wrapper.le(TicketStock::getUseDate, endDate);
+        }
+        wrapper.orderByDesc(TicketStock::getUseDate);
+        return ticketStockMapper.selectPage(pageParam, wrapper);
+    }
+
+    @Override
+    public boolean updateTicketStock(TicketStock stock) {
+        return ticketStockMapper.updateById(stock) > 0;
+    }
+
+    @Override
+    public boolean lockTicketStock(Long id, Integer lockedStock) {
+        TicketStock stock = ticketStockMapper.selectById(id);
+        if (stock == null) {
+            return false;
+        }
+        stock.setLockedStock(lockedStock);
+        return ticketStockMapper.updateById(stock) > 0;
     }
 }

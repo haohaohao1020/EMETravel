@@ -64,6 +64,35 @@ public class JwtUtil {
         return null;
     }
 
+    public String generateAdminToken(Long adminId, String username) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("adminId", adminId);
+        claims.put("username", username);
+        claims.put("isAdmin", true);
+        return createToken(claims);
+    }
+
+    public Long getAdminIdFromToken(String token) {
+        Claims claims = parseToken(token);
+        if (claims != null && claims.get("adminId") != null) {
+            return Long.valueOf(claims.get("adminId").toString());
+        }
+        return null;
+    }
+
+    public String getUsernameFromToken(String token) {
+        Claims claims = parseToken(token);
+        if (claims != null && claims.get("username") != null) {
+            return claims.get("username").toString();
+        }
+        return null;
+    }
+
+    public boolean isAdminToken(String token) {
+        Claims claims = parseToken(token);
+        return claims != null && claims.get("isAdmin") != null && (Boolean) claims.get("isAdmin");
+    }
+
     public boolean validateToken(String token) {
         try {
             Claims claims = parseToken(token);

@@ -414,7 +414,34 @@ const whiteList = ['/login']
 router.beforeEach(async (to, from, next) => {
   NProgress.start()
   document.title = to.meta?.title ? `${to.meta.title} - 峨眉山景区管理后台` : '峨眉山景区管理后台'
-  next()
+  
+  const userStore = useUserStore()
+  
+  if (userStore.token) {
+    if (to.path === '/login') {
+      next({ path: '/' })
+      NProgress.done()
+    } else {
+      if (!userStore.userInfo) {
+        try {
+          await userStore.getUserInfo()
+        } catch (error) {
+          await userStore.resetToken()
+          next(`/login?redirect=${to.path}`)
+          NProgress.done()
+          return
+        }
+      }
+      next()
+    }
+  } else {
+    if (whiteList.indexOf(to.path) !== -1) {
+      next()
+    } else {
+      next(`/login?redirect=${to.path}`)
+      NProgress.done()
+    }
+  }
 })
 
 router.afterEach((to) => {
